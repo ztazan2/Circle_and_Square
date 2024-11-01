@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class base_enemy : MonoBehaviour
+public class base_player : MonoBehaviour
 {
-    public int maxHealth; // 기지의 총체력
+    public int maxHealth; // 기본 최대 체력
     private int currentHealth; // 현재 체력
     public Text healthText; // 체력을 표시할 텍스트 UI
 
     void Start()
     {
-        // 체력을 초기화하고, 텍스트 UI를 업데이트합니다.
+        // 초기 체력을 설정하고 텍스트 UI 업데이트
         currentHealth = maxHealth;
         UpdateHealthText();
     }
 
-    // 플레이어의 공격으로 인해 기지가 피해를 입을 때 호출할 메서드
+    // 데미지를 받아 체력을 감소시키는 메서드
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -28,11 +28,10 @@ public class base_enemy : MonoBehaviour
             DestroyBase();
         }
 
-        Debug.Log("적 기지 체력 감소: " + currentHealth);
+        Debug.Log("플레이어 기지 체력 감소: " + currentHealth);
 
         // 체력 텍스트 UI 업데이트
         UpdateHealthText();
-
     }
 
     // 체력 텍스트 UI를 업데이트하는 메서드
@@ -44,11 +43,11 @@ public class base_enemy : MonoBehaviour
         }
     }
 
-    // 기지가 파괴되었을 때 실행할 동작 (예: 파괴 애니메이션, 게임 오버 처리 등)
+    // 기지가 파괴되었을 때 실행할 동작
     private void DestroyBase()
     {
-        // 기지 파괴 로직 작성 (필요한 경우)
-        Debug.Log("기지가 파괴되었습니다!");
-        // 이곳에 파괴 애니메이션이나 게임 종료 처리 코드를 추가할 수 있습니다.
+        Debug.Log("플레이어 기지가 파괴되었습니다!");
+        // 파괴 애니메이션이나 게임 종료 처리 등을 추가 가능
+        Destroy(gameObject);
     }
 }

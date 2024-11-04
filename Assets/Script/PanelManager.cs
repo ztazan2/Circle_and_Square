@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +15,18 @@ public class PanelManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // 현재 패널이 열려 있으면 유닛 비활성화
+            if (currentOpenPanel != null)
+            {
+                SetActiveForEntities(players, false);
+                SetActiveForEntities(enemies, false);
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
         }
         else
         {
@@ -23,59 +34,56 @@ public class PanelManager : MonoBehaviour
         }
     }
 
-    // 패널을 열고, 현재 열려 있는 다른 패널이 있으면 닫는 메서드
-    public void OpenPanel(GameObject panel)
+    public bool OpenPanel(GameObject panel)
     {
         if (currentOpenPanel != null && currentOpenPanel != panel)
         {
-            currentOpenPanel.SetActive(false);
+            Debug.Log("다른 패널이 이미 열려 있어 이 패널을 열 수 없습니다.");
+            return false;
+        }
+
+        if (currentOpenPanel == panel)
+        {
+            Debug.Log("같은 패널이 이미 열려 있습니다.");
+            return false;
         }
 
         currentOpenPanel = panel;
         panel.SetActive(true);
-        panel.transform.SetAsLastSibling(); // 패널을 화면의 맨 앞으로 가져옴
+        panel.transform.SetAsLastSibling();
 
-        // 플레이어와 에너미들을 비활성화
-        foreach (var player in players)
-        {
-            if (player != null)
-            {
-                player.SetActive(false);
-            }
-        }
+        SetActiveForEntities(players, false);
+        SetActiveForEntities(enemies, false);
+        Time.timeScale = 0f;
 
-        foreach (var enemy in enemies)
-        {
-            if (enemy != null)
-            {
-                enemy.SetActive(false);
-            }
-        }
+        return true;
     }
 
-    // 현재 열려 있는 패널을 닫는 메서드
     public void ClosePanel(GameObject panel)
     {
         if (currentOpenPanel == panel)
         {
-            currentOpenPanel.SetActive(false);
+            panel.SetActive(false);
             currentOpenPanel = null;
 
-            // 플레이어와 에너미들을 다시 활성화
-            foreach (var player in players)
-            {
-                if (player != null)
-                {
-                    player.SetActive(true);
-                }
-            }
+            SetActiveForEntities(players, true);
+            SetActiveForEntities(enemies, true);
+            Time.timeScale = 1f;
+        }
+    }
 
-            foreach (var enemy in enemies)
+    public bool IsPanelOpen()
+    {
+        return currentOpenPanel != null;
+    }
+
+    private void SetActiveForEntities(List<GameObject> entities, bool isActive)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity != null)
             {
-                if (enemy != null)
-                {
-                    enemy.SetActive(true);
-                }
+                entity.SetActive(isActive);
             }
         }
     }

@@ -9,11 +9,16 @@ public class base_player : MonoBehaviour
     private int currentHealth; // 현재 체력
     public Text healthText; // 체력을 표시할 텍스트 UI
 
+    private EndGamePanelController gameManager; // GameManager 참조
+
     void Start()
     {
         // 초기 체력을 설정하고 텍스트 UI 업데이트
         currentHealth = maxHealth;
         UpdateHealthText();
+
+        // GameManager 찾기
+        gameManager = FindObjectOfType<EndGamePanelController>();
     }
 
     // 데미지를 받아 체력을 감소시키는 메서드
@@ -47,7 +52,13 @@ public class base_player : MonoBehaviour
     private void DestroyBase()
     {
         Debug.Log("플레이어 기지가 파괴되었습니다!");
-        // 파괴 애니메이션이나 게임 종료 처리 등을 추가 가능
+
+        // GameManager를 통해 게임 종료 처리
+        if (gameManager != null)
+        {
+            gameManager.EndGame(true); // 플레이어 기지 파괴 시 true 전달
+        }
+
         Destroy(gameObject);
     }
 }

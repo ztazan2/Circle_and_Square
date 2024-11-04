@@ -9,11 +9,16 @@ public class base_enemy : MonoBehaviour
     private int currentHealth; // 현재 체력
     public Text healthText; // 체력을 표시할 텍스트 UI
 
+    private EndGamePanelController gameManager; // GameManager 참조
+
     void Start()
     {
-        // 체력을 초기화하고, 텍스트 UI를 업데이트합니다.
+        // 체력을 초기화하고 텍스트 UI를 업데이트합니다.
         currentHealth = maxHealth;
         UpdateHealthText();
+
+        // GameManager 찾기
+        gameManager = FindObjectOfType<EndGamePanelController>();
     }
 
     // 플레이어의 공격으로 인해 기지가 피해를 입을 때 호출할 메서드
@@ -32,7 +37,6 @@ public class base_enemy : MonoBehaviour
 
         // 체력 텍스트 UI 업데이트
         UpdateHealthText();
-
     }
 
     // 체력 텍스트 UI를 업데이트하는 메서드
@@ -47,8 +51,14 @@ public class base_enemy : MonoBehaviour
     // 기지가 파괴되었을 때 실행할 동작 (예: 파괴 애니메이션, 게임 오버 처리 등)
     private void DestroyBase()
     {
-        // 기지 파괴 로직 작성 (필요한 경우)
-        Debug.Log("기지가 파괴되었습니다!");
-        // 이곳에 파괴 애니메이션이나 게임 종료 처리 코드를 추가할 수 있습니다.
+        Debug.Log("적 기지가 파괴되었습니다!");
+
+        // GameManager를 통해 게임 종료 처리
+        if (gameManager != null)
+        {
+            gameManager.EndGame(false); // 적 기지 파괴 시 false 전달
+        }
+
+        Destroy(gameObject); // 기지를 파괴하여 게임에서 제거
     }
 }

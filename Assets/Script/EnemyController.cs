@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,13 +9,11 @@ public class EnemyController : MonoBehaviour
     public float attackCooldown; // 공격 대기 시간
     public float maxHealth; // 최대 체력
     private float currentHealth; // 현재 체력
-    public float knockbackForce; // 넉백
+    public float knockbackForce; // 넉백 힘
     public Text healthText; // 체력을 표시할 Text 컴포넌트
-    
-    public List<GameObject> targets; // 공격 대상 리스트 (플레이어 및 기지 포함)
-    private Transform target;
 
-    private float lastAttackTime; // 마지막으로 공격한 시간을 저장
+    private Transform target; // 공격 대상의 Transform
+    private float lastAttackTime; // 마지막 공격 시간을 저장
     private bool knockbackApplied = false; // 넉백 한 번만 적용되도록 설정
 
     void Start()
@@ -94,19 +91,17 @@ public class EnemyController : MonoBehaviour
 
     void FindClosestTarget()
     {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("player");
         float closestDistance = Mathf.Infinity;
         target = null;
 
-        foreach (GameObject obj in targets)
+        foreach (GameObject player in players)
         {
-            if (obj != null)
+            float distance = Vector2.Distance(transform.position, player.transform.position);
+            if (distance < closestDistance)
             {
-                float distance = Vector2.Distance(transform.position, obj.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    target = obj.transform;
-                }
+                closestDistance = distance;
+                target = player.transform;
             }
         }
     }

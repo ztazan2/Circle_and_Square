@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +12,7 @@ public class PlayerController : MonoBehaviour
     public float knockbackForce; // 넉백 힘
     public Text healthText; // 체력을 표시할 Text 컴포넌트
 
-    public List<GameObject> targets; // 공격 대상 리스트 (적 및 기지 포함)
     private Transform target; // 현재 공격 대상의 Transform
-
     private float lastAttackTime; // 마지막 공격 시간을 저장
     private bool knockbackApplied = false; // 넉백 한 번만 적용되도록 설정
 
@@ -85,19 +82,17 @@ public class PlayerController : MonoBehaviour
 
     void FindClosestTarget()
     {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("enemy");
         float closestDistance = Mathf.Infinity;
         target = null;
 
-        foreach (GameObject obj in targets)
+        foreach (GameObject enemy in enemies)
         {
-            if (obj != null)
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+            if (distance < closestDistance)
             {
-                float distance = Vector2.Distance(transform.position, obj.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    target = obj.transform;
-                }
+                closestDistance = distance;
+                target = enemy.transform;
             }
         }
     }
@@ -140,14 +135,5 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
-
-    public void RegisterEnemy(GameObject enemy)
-    {
-        if (!targets.Contains(enemy))
-        {
-            targets.Add(enemy); // 새로운 적을 공격 대상 리스트에 추가
-            Debug.Log("새로운 적이 등록되었습니다: " + enemy.name);
-        }
     }
 }

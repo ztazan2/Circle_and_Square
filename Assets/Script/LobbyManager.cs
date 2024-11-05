@@ -5,12 +5,13 @@ public class LobbyManager : MonoBehaviour
 {
     public GameObject lobbyPanel; // 로비 패널 (인스펙터에서 참조)
     private PanelManager panelManager; // PanelManager 참조
-    private static bool isRestarting = false; // 씬 재시작 여부를 나타내는 변수
+    public static bool isRestarting = false; // 씬 재시작 여부를 나타내는 변수
 
     void Start()
     {
         panelManager = PanelManager.Instance;
 
+        // 게임 시작 시 처음만 로비 패널을 활성화
         if (!isRestarting)
         {
             ShowLobby();
@@ -18,8 +19,8 @@ public class LobbyManager : MonoBehaviour
         }
         else
         {
-            isRestarting = false; // 다음 로드에서 로비 패널을 다시 열도록 초기화
-            Time.timeScale = 1f; // 씬 로드 시 재개
+            isRestarting = false; // 재시작 후에는 로비 패널을 다시 열리지 않도록 설정
+            Time.timeScale = 1f; // 씬 로드 시 게임 재개
         }
     }
 
@@ -53,6 +54,7 @@ public class LobbyManager : MonoBehaviour
 
     public void RestartGame()
     {
+        // 로비를 닫고 재시작 상태를 설정하여 로비가 다시 열리지 않도록 설정
         HideLobby();
         Debug.Log("게임 재시작");
         isRestarting = true; // 재시작 상태로 설정

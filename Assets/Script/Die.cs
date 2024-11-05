@@ -48,6 +48,9 @@ public class Die : MonoBehaviour
             }
 
             Debug.Log("스테이지 재시작");
+
+            // 로비가 열리지 않도록 설정
+            LobbyManager.isRestarting = true;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // 현재 씬을 다시 로드
         }
     }

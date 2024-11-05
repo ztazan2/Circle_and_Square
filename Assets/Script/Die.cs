@@ -18,8 +18,6 @@ public class Die : MonoBehaviour
     {
         if (panelManager != null)
         {
-            Time.timeScale = 1f; // 게임 일시정지 해제
-
             // Die 패널을 닫고 로비 패널을 연다.
             if (diePanel != null)
             {
@@ -39,8 +37,6 @@ public class Die : MonoBehaviour
     {
         if (panelManager != null)
         {
-            Time.timeScale = 1f; // 게임 일시정지 해제
-
             // Die 패널을 닫고 씬 재시작
             if (diePanel != null)
             {

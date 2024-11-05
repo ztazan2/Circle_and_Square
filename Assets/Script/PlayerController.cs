@@ -4,48 +4,43 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public float attackDamage = 100f;
-    public float attackRange = 1.5f;
-    public float moveSpeed = 2f;
-    public float attackCooldown = 1f;
-    public float maxHealth = 100f;
-    private float currentHealth;
+    public float attackDamage; // 공격 데미지
+    public float attackRange; // 공격 사거리
+    public float moveSpeed; // 이동 속도
+    public float attackCooldown; // 공격 대기 시간
+    public float maxHealth; // 최대 체력
+    private float currentHealth; // 현재 체력
+    public float knockbackForce; // 넉백 힘
+    public Text healthText; // 체력을 표시할 Text 컴포넌트
 
-    public List<GameObject> enemies = new List<GameObject>();
-    private List<EnemyController> enemyControllers = new List<EnemyController>();
+    public List<GameObject> targets; // 공격 대상 리스트 (적 및 기지 포함)
+    private Transform target; // 현재 공격 대상의 Transform
 
-    public Text healthText;
-
-    private float lastAttackTime = 0f;
-    private GameObject targetEnemy;
+    private float lastAttackTime; // 마지막 공격 시간을 저장
+    private bool knockbackApplied = false; // 넉백 한 번만 적용되도록 설정
 
     void Start()
     {
         currentHealth = maxHealth;
         UpdateHealthText();
-
-        foreach (GameObject enemy in enemies)
-        {
-            RegisterEnemy(enemy);
-        }
     }
 
     void Update()
     {
-        FindClosestEnemy();
+        FindClosestTarget();
 
-        if (targetEnemy != null)
+        if (target != null)
         {
-            float distanceToEnemy = Vector2.Distance(transform.position, targetEnemy.transform.position);
+            float distanceToTarget = Vector2.Distance(transform.position, target.position);
 
-            if (distanceToEnemy > attackRange)
+            if (distanceToTarget > attackRange)
             {
-                MoveTowardsEnemy();
+                MoveTowardsTarget();
             }
             else if (Time.time >= lastAttackTime + attackCooldown)
             {
                 lastAttackTime = Time.time;
-                Attack(targetEnemy);
+                Attack(target.gameObject);
             }
         }
     }
@@ -53,6 +48,12 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+
+        if (currentHealth <= maxHealth * 0.3f && !knockbackApplied)
+        {
+            ApplyKnockback();
+            knockbackApplied = true; // 넉백이 한 번만 적용되도록 설정
+        }
 
         if (currentHealth <= 0)
         {
@@ -82,48 +83,56 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FindClosestEnemy()
+    void FindClosestTarget()
     {
         float closestDistance = Mathf.Infinity;
-        targetEnemy = null;
+        target = null;
 
-        foreach (GameObject enemy in enemies)
+        foreach (GameObject obj in targets)
         {
-            if (enemy != null)
+            if (obj != null)
             {
-                float distance = Vector2.Distance(transform.position, enemy.transform.position);
+                float distance = Vector2.Distance(transform.position, obj.transform.position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    targetEnemy = enemy;
+                    target = obj.transform;
                 }
             }
         }
     }
 
-    void MoveTowardsEnemy()
+    void MoveTowardsTarget()
     {
-        Vector2 direction = (targetEnemy.transform.position - transform.position).normalized;
-        transform.position = Vector2.MoveTowards(transform.position, targetEnemy.transform.position, moveSpeed * Time.deltaTime);
+        Vector2 direction = (target.position - transform.position).normalized;
+        transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
     }
 
-    void Attack(GameObject enemy)
+    void Attack(GameObject targetObject)
     {
-        Debug.Log("플레이어가 공격을 수행합니다: " + enemy.name);
+        Debug.Log("플레이어가 공격을 수행합니다: " + targetObject.name);
 
-        // 기지인지 확인하고 데미지 적용
-        base_enemy baseEnemy = enemy.GetComponent<base_enemy>();
+        base_enemy baseEnemy = targetObject.GetComponent<base_enemy>();
         if (baseEnemy != null)
         {
-            baseEnemy.TakeDamage((int)attackDamage); // attackDamage를 int로 변환하여 기지에 데미지 적용
+            baseEnemy.TakeDamage((int)attackDamage);
             return;
         }
 
-        // 적 유닛인지 확인하고 데미지 적용
-        EnemyController enemyController = enemy.GetComponent<EnemyController>();
+        EnemyController enemyController = targetObject.GetComponent<EnemyController>();
         if (enemyController != null)
         {
-            enemyController.TakeDamage(attackDamage); // 적 유닛에 데미지 적용
+            enemyController.TakeDamage(attackDamage);
+        }
+    }
+
+    void ApplyKnockback()
+    {
+        if (target != null)
+        {
+            Vector2 knockbackDirection = (transform.position - target.position).normalized;
+            transform.position += (Vector3)(knockbackDirection * knockbackForce * Time.deltaTime);
+            Debug.Log("넉백 적용됨");
         }
     }
 
@@ -135,29 +144,10 @@ public class PlayerController : MonoBehaviour
 
     public void RegisterEnemy(GameObject enemy)
     {
-        if (!enemies.Contains(enemy))
+        if (!targets.Contains(enemy))
         {
-            enemies.Add(enemy);
-
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if (enemyController != null && !enemyControllers.Contains(enemyController))
-            {
-                enemyControllers.Add(enemyController);
-            }
-        }
-    }
-
-    public void UnregisterEnemy(GameObject enemy)
-    {
-        if (enemies.Contains(enemy))
-        {
-            enemies.Remove(enemy);
-
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if (enemyController != null && enemyControllers.Contains(enemyController))
-            {
-                enemyControllers.Remove(enemyController);
-            }
+            targets.Add(enemy); // 새로운 적을 공격 대상 리스트에 추가
+            Debug.Log("새로운 적이 등록되었습니다: " + enemy.name);
         }
     }
 }

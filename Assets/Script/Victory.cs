@@ -17,9 +17,6 @@ public class Victory : MonoBehaviour
     {
         if (panelManager != null)
         {
-            // 게임 일시정지 해제 (필요한 경우)
-            Time.timeScale = 1f;
-
             // 승리 패널을 닫고 로비 패널을 연다.
             if (victoryPanel != null)
             {

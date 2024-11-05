@@ -20,22 +20,20 @@ public class EndGamePanelController : MonoBehaviour
             gameEnded = true;
             GameObject panelToOpen = isPlayerBaseDestroyed ? endGamePanelB : endGamePanelA;
 
-            // 패널을 열고 게임을 일시정지
+            // 패널을 열고 게임을 일시정지 (PanelManager에서 관리)
             if (panelToOpen != null && panelManager != null)
             {
                 panelManager.OpenPanel(panelToOpen);
             }
-            Time.timeScale = 0f;
         }
     }
 
     // 게임 재시작 메서드
     public void RestartGame()
     {
-        Time.timeScale = 1f; // 일시정지 해제
         gameEnded = false;
 
-        // 모든 패널 닫기
+        // 모든 패널 닫기 (PanelManager에서 관리)
         if (panelManager != null)
         {
             panelManager.ClosePanel(endGamePanelA);

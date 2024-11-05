@@ -15,12 +15,10 @@ public class LobbyManager : MonoBehaviour
         if (!isRestarting)
         {
             ShowLobby();
-            Time.timeScale = 0f; // 로비 패널이 열리면서 게임 일시정지
         }
         else
         {
-            isRestarting = false; // 재시작 후에는 로비 패널을 다시 열리지 않도록 설정
-            Time.timeScale = 1f; // 씬 로드 시 게임 재개
+            isRestarting = false; // 재시작 후에는 로비 패널이 다시 열리지 않도록 설정
         }
     }
 
@@ -31,7 +29,6 @@ public class LobbyManager : MonoBehaviour
             if (panelManager.OpenPanel(lobbyPanel))
             {
                 Debug.Log("로비 패널이 열렸습니다.");
-                Time.timeScale = 0f; // 로비 패널 열기와 동시에 게임 일시정지
             }
         }
     }
@@ -42,7 +39,6 @@ public class LobbyManager : MonoBehaviour
         {
             panelManager.ClosePanel(lobbyPanel);
             Debug.Log("로비 패널이 닫혔습니다.");
-            Time.timeScale = 1f; // 로비 패널 닫기와 동시에 게임 재개
         }
     }
 

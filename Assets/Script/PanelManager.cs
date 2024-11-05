@@ -15,22 +15,21 @@ public class PanelManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            // 현재 패널이 열려 있으면 유닛 비활성화
-            if (currentOpenPanel != null)
-            {
-                SetActiveForEntities(players, false);
-                SetActiveForEntities(enemies, false);
-                Time.timeScale = 0f;
-            }
-            else
-            {
-                Time.timeScale = 1f;
-            }
         }
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        // 씬이 재시작된 상태라면 유닛을 비활성화하고, 패널이 열렸을 때에만 유닛이 활성화되도록 설정
+        if (LobbyManager.isRestarting)
+        {
+            DisableEntities();
+            Time.timeScale = 0f;
+            LobbyManager.isRestarting = false; // 재시작 상태 초기화
         }
     }
 
@@ -52,8 +51,8 @@ public class PanelManager : MonoBehaviour
         panel.SetActive(true);
         panel.transform.SetAsLastSibling();
 
-        SetActiveForEntities(players, false);
-        SetActiveForEntities(enemies, false);
+        // 유닛을 비활성화하고 게임을 일시정지
+        DisableEntities();
         Time.timeScale = 0f;
 
         return true;
@@ -66,8 +65,8 @@ public class PanelManager : MonoBehaviour
             panel.SetActive(false);
             currentOpenPanel = null;
 
-            SetActiveForEntities(players, true);
-            SetActiveForEntities(enemies, true);
+            // 유닛 활성화 및 게임 재개
+            EnableEntities();
             Time.timeScale = 1f;
         }
     }
@@ -77,7 +76,19 @@ public class PanelManager : MonoBehaviour
         return currentOpenPanel != null;
     }
 
-    private void SetActiveForEntities(List<GameObject> entities, bool isActive)
+    public void DisableEntities()
+    {
+        SetActiveForEntities(players, false);
+        SetActiveForEntities(enemies, false);
+    }
+
+    public void EnableEntities()
+    {
+        SetActiveForEntities(players, true);
+        SetActiveForEntities(enemies, true);
+    }
+
+    public void SetActiveForEntities(List<GameObject> entities, bool isActive)
     {
         foreach (var entity in entities)
         {

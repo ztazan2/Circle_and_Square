@@ -16,9 +16,12 @@ public class EnemyController : MonoBehaviour
     private float lastAttackTime; // 마지막 공격 시간을 저장
     private bool knockbackApplied = false; // 넉백 한 번만 적용되도록 설정
 
+    private ResourceManager resourceManager; // ResourceManager 참조
+
     void Start()
     {
         currentHealth = maxHealth; // 현재 체력을 최대 체력으로 초기화
+        resourceManager = FindObjectOfType<ResourceManager>(); // ResourceManager 검색
         UpdateHealthText(); // 초기 체력 표시
     }
 
@@ -86,6 +89,13 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         Debug.Log("적 사망");
+
+        // 적이 사망할 때 ResourceManager에 보상 호출
+        if (resourceManager != null)
+        {
+            resourceManager.OnEnemyDefeated(gameObject);
+        }
+
         Destroy(gameObject);
     }
 

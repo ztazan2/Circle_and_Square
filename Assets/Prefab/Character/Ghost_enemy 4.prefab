@@ -124,7 +124,7 @@ MonoBehaviour:
   attackRange: 1.5
   moveSpeed: 0.4
   attackCooldown: 1
-  maxHealth: 6000
+  maxHealth: 8000
   knockbackForce: 50
   healthText: {fileID: 7578388049634764744}
 --- !u!1 &6508186660948372634

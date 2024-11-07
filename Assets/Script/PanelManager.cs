@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PanelManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PanelManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> players; // 플레이어 오브젝트 리스트 참조
     [SerializeField] private List<GameObject> enemies; // 에너미 오브젝트 리스트 참조
+    [SerializeField] private List<Button> externalButtons; // 패널에 속하지 않은 버튼들
 
     private void Awake()
     {
@@ -24,10 +26,10 @@ public class PanelManager : MonoBehaviour
 
     private void Start()
     {
-        // 씬이 재시작된 상태라면 유닛을 비활성화하고, 패널이 열렸을 때에만 유닛이 활성화되도록 설정
         if (LobbyManager.isRestarting)
         {
             DisableEntities();
+            DisableExternalButtons(); // 로비가 시작될 때 외부 버튼 비활성화
             Time.timeScale = 0f;
             LobbyManager.isRestarting = false; // 재시작 상태 초기화
         }
@@ -51,7 +53,8 @@ public class PanelManager : MonoBehaviour
         panel.SetActive(true);
         panel.transform.SetAsLastSibling();
 
-        // 유닛을 비활성화하고 게임을 일시정지
+        DisableExternalButtons(); // 패널이 열릴 때 외부 버튼 비활성화
+
         DisableEntities();
         Time.timeScale = 0f;
 
@@ -65,7 +68,8 @@ public class PanelManager : MonoBehaviour
             panel.SetActive(false);
             currentOpenPanel = null;
 
-            // 유닛 활성화 및 게임 재개
+            EnableExternalButtons(); // 패널이 닫힐 때 외부 버튼 활성화
+
             EnableEntities();
             Time.timeScale = 1f;
         }
@@ -95,6 +99,28 @@ public class PanelManager : MonoBehaviour
             if (entity != null)
             {
                 entity.SetActive(isActive);
+            }
+        }
+    }
+
+    private void DisableExternalButtons()
+    {
+        foreach (Button button in externalButtons)
+        {
+            if (button != null)
+            {
+                button.interactable = false; // 외부 버튼 비활성화
+            }
+        }
+    }
+
+    private void EnableExternalButtons()
+    {
+        foreach (Button button in externalButtons)
+        {
+            if (button != null)
+            {
+                button.interactable = true; // 외부 버튼 활성화
             }
         }
     }

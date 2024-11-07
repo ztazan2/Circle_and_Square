@@ -56,7 +56,8 @@ public class EnemyController : MonoBehaviour
 
         if (currentHealth <= maxHealth * 0.3f && !knockbackApplied)
         {
-            ApplyKnockback();
+            // 기본 넉백을 적용하기 위해 ApplyKnockback 호출
+            ApplyKnockback(Vector2.right, knockbackForce); // 항상 오른쪽으로만 밀리도록 수정
             knockbackApplied = true; // 넉백이 한 번만 적용되도록 설정
         }
 
@@ -67,23 +68,23 @@ public class EnemyController : MonoBehaviour
         }
 
         Debug.Log("적 체력: " + currentHealth);
-        UpdateHealthText();
+        UpdateHealthText(); // 체력 텍스트 업데이트
     }
 
-    void ApplyKnockback()
+    // 외부에서 넉백 방향과 힘을 받아 위치를 변경하는 메서드
+    public void ApplyKnockback(Vector2 knockbackDirection, float knockbackForce)
     {
-        if (target != null)
-        {
-            Vector2 knockbackDirection = (transform.position - target.position).normalized;
-            transform.position += (Vector3)(knockbackDirection * knockbackForce * Time.deltaTime);
-        }
+        // 넉백 방향을 오른쪽(x축 양수 방향)으로 강제 설정
+        knockbackDirection = Vector2.right;
+
+        transform.position += (Vector3)(knockbackDirection * knockbackForce * Time.deltaTime);
     }
 
     void UpdateHealthText()
     {
         if (healthText != null)
         {
-            healthText.text = "HP: " + currentHealth.ToString("F0");
+            healthText.text = "HP: " + currentHealth.ToString("F0"); // 체력 텍스트 업데이트
         }
         else
         {

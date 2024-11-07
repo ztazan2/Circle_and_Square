@@ -154,9 +154,10 @@ public class PlayerController : MonoBehaviour
     {
         if (target != null)
         {
-            Vector2 knockbackDirection = (transform.position - target.position).normalized;
+            // 넉백 방향을 좌측으로만 제한
+            Vector2 knockbackDirection = Vector2.left;
             transform.position += (Vector3)(knockbackDirection * knockbackForce * Time.deltaTime);
-            Debug.Log("넉백 적용됨");
+            Debug.Log("좌측 방향으로 넉백 적용됨");
         }
     }
 

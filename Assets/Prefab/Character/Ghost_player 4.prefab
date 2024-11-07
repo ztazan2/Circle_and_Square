@@ -120,13 +120,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f077dfbb5c4924ca8e8cd7a65a6758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 500
+  attackDamage: 600
   attackRange: 1.5
   moveSpeed: 0.4
   attackCooldown: 1
   maxHealth: 6000
   knockbackForce: 50
   healthText: {fileID: 556280375298333680}
+  targetTags:
+  - base_enemy
+  - enemy
+  attackPriorityTags:
+  - enemy
+  - base_enemy
 --- !u!1 &2694769638428099693
 GameObject:
   m_ObjectHideFlags: 0

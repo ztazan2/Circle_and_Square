@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class EnemyController : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class EnemyController : MonoBehaviour
     private float currentHealth; // 현재 체력
     public float knockbackForce; // 넉백 힘
     public Text healthText; // 체력을 표시할 Text 컴포넌트
+
+    [Header("Targeting Settings")]
+    public List<string> targetTags; // 추적할 태그 리스트
+    public List<string> attackPriorityTags; // 공격 우선순위 태그 리스트
 
     private Transform target; // 공격 대상의 Transform
     private float lastAttackTime; // 마지막 공격 시간을 저장
@@ -101,17 +106,41 @@ public class EnemyController : MonoBehaviour
 
     void FindClosestTarget()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("player");
-        float closestDistance = Mathf.Infinity;
         target = null;
+        float closestDistance = Mathf.Infinity;
 
-        foreach (GameObject player in players)
+        // 우선순위에 따른 대상 탐색
+        foreach (string priorityTag in attackPriorityTags)
         {
-            float distance = Vector2.Distance(transform.position, player.transform.position);
-            if (distance < closestDistance)
+            GameObject[] potentialTargets = GameObject.FindGameObjectsWithTag(priorityTag);
+            foreach (GameObject potentialTarget in potentialTargets)
             {
-                closestDistance = distance;
-                target = player.transform;
+                float distance = Vector2.Distance(transform.position, potentialTarget.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    target = potentialTarget.transform;
+                }
+            }
+            // 우선순위 태그에 대상이 있으면 찾기 종료
+            if (target != null)
+            {
+                return;
+            }
+        }
+
+        // 우선순위 태그에서 대상을 찾지 못했을 경우 일반 대상 태그에서 찾기
+        foreach (string tag in targetTags)
+        {
+            GameObject[] potentialTargets = GameObject.FindGameObjectsWithTag(tag);
+            foreach (GameObject potentialTarget in potentialTargets)
+            {
+                float distance = Vector2.Distance(transform.position, potentialTarget.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    target = potentialTarget.transform;
+                }
             }
         }
     }

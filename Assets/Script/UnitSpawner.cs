@@ -15,7 +15,9 @@ public class UnitSummonManager : MonoBehaviour
         public int summonCost; // 유닛 소환 비용
         public GameObject unitPrefab; // 소환할 유닛 프리팹
         public float cooldownTime; // 유닛 소환 쿨타임 (초 단위)
+        public Image cooldownOverlay; // 쿨타임 표시용 오버레이 이미지
         [HideInInspector] public float lastSummonTime; // 마지막 소환 시간
+        [HideInInspector] public bool isFirstSummon = true; // 첫 소환 여부
     }
 
     public List<UnitButton> unitButtons = new List<UnitButton>(5); // 5개의 유닛 소환 버튼 설정
@@ -23,6 +25,10 @@ public class UnitSummonManager : MonoBehaviour
 
     private void Start()
     {
+        foreach (UnitButton unitButton in unitButtons)
+        {
+            unitButton.cooldownOverlay.fillAmount = 1; // 초기 상태에서 쿨타임 오버레이가 가득 차 있음
+        }
         UpdateUI();
     }
 
@@ -40,9 +46,23 @@ public class UnitSummonManager : MonoBehaviour
         foreach (UnitButton unitButton in unitButtons)
         {
             bool canSummon = resourceManager.currentResource >= unitButton.summonCost &&
-                             Time.time >= unitButton.lastSummonTime + unitButton.cooldownTime;
+                             (unitButton.isFirstSummon || Time.time >= unitButton.lastSummonTime + unitButton.cooldownTime);
+
+            // 버튼 색상 설정
             unitButton.summonButton.image.color = canSummon ? Color.yellow : Color.gray;
             unitButton.costText.text = $"{unitButton.summonCost} GOLD";
+
+            // 쿨타임 오버레이의 fillAmount 설정
+            if (!canSummon && !unitButton.isFirstSummon)
+            {
+                // 첫 소환 이후 쿨타임이 적용되도록 설정
+                float cooldownProgress = (Time.time - unitButton.lastSummonTime) / unitButton.cooldownTime;
+                unitButton.cooldownOverlay.fillAmount = Mathf.Clamp01(cooldownProgress);
+            }
+            else
+            {
+                unitButton.cooldownOverlay.fillAmount = 1; // 쿨타임이 끝나면 오버레이가 가득 찬 상태로 복구
+            }
         }
     }
 
@@ -53,11 +73,15 @@ public class UnitSummonManager : MonoBehaviour
             UnitButton unitButton = unitButtons[index];
 
             // 소환 가능 여부 확인 (자원 조건과 쿨타임 조건)
-            if (resourceManager.currentResource >= unitButton.summonCost &&
-                Time.time >= unitButton.lastSummonTime + unitButton.cooldownTime)
+            bool canSummon = resourceManager.currentResource >= unitButton.summonCost &&
+                             (unitButton.isFirstSummon || Time.time >= unitButton.lastSummonTime + unitButton.cooldownTime);
+
+            if (canSummon)
             {
                 resourceManager.currentResource -= unitButton.summonCost;
                 unitButton.lastSummonTime = Time.time; // 현재 시간을 마지막 소환 시간으로 설정
+                unitButton.isFirstSummon = false; // 첫 소환 이후 쿨타임 적용
+                unitButton.cooldownOverlay.fillAmount = 0; // 클릭 시 쿨타임 초기화
                 Debug.Log($"{unitButton.summonButton.name} 유닛 소환!");
                 UpdateUI();
 

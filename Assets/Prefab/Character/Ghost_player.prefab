@@ -97,7 +97,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8423783772804952172
 Transform:
   m_ObjectHideFlags: 0
@@ -206,6 +206,12 @@ MonoBehaviour:
   maxHealth: 1000
   knockbackForce: 50
   healthText: {fileID: 691102725368670708}
+  targetTags:
+  - base_enemy
+  - enemy
+  attackPriorityTags:
+  - enemy
+  - base_enemy
 --- !u!1 &7514139406551596135
 GameObject:
   m_ObjectHideFlags: 0

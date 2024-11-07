@@ -41,7 +41,10 @@ public class ResourceManager : MonoBehaviour
     {
         foreach (var unitReward in unitResourceRewards)
         {
-            if (enemy.CompareTag("enemy") && enemy.name.StartsWith(unitReward.unitPrefab.name)) // 이름이 접두사로 비교
+            // "(Clone)" 접미사를 제거하고 이름을 비교하여 정확하게 매칭
+            string enemyName = enemy.name.Replace("(Clone)", "").Trim();
+
+            if (enemy.CompareTag("enemy") && enemyName == unitReward.unitPrefab.name)
             {
                 AddResource(unitReward.resourceReward);
                 Debug.Log($"{enemy.name} 처치로 {unitReward.resourceReward} 자원 획득!");

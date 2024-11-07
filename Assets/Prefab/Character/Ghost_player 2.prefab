@@ -308,3 +308,9 @@ MonoBehaviour:
   maxHealth: 800
   knockbackForce: 50
   healthText: {fileID: 8186001503912042393}
+  targetTags:
+  - base_enemy
+  - enemy
+  attackPriorityTags:
+  - enemy
+  - base_enemy

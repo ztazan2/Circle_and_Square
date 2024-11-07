@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
     public class TimedEnemy
     {
         public GameObject enemyPrefab;   // 등장할 유닛 프리팹
-        public float spawnTimeInSeconds; // 유닛 등장 시간 (초 단위)
+        public float spawnInterval;      // 유닛 등장 간격 (초 단위)
     }
 
     public List<TimedEnemy> timedEnemies = new List<TimedEnemy>(); // 등장할 유닛 리스트
@@ -19,7 +19,7 @@ public class EnemySpawner : MonoBehaviour
         // 유닛의 스폰 위치 설정
         spawnPosition = new Vector3(6f, -1.4f, transform.position.z);
 
-        // 각 유닛에 대해 지정된 시간에 생성하도록 코루틴 시작
+        // 각 유닛에 대해 지정된 간격으로 생성하도록 코루틴 시작
         foreach (TimedEnemy timedEnemy in timedEnemies)
         {
             StartCoroutine(SpawnTimedEnemy(timedEnemy));
@@ -28,12 +28,19 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator SpawnTimedEnemy(TimedEnemy timedEnemy)
     {
-        // 인스펙터에서 설정한 시간만큼 대기 후 유닛 생성
-        yield return new WaitForSeconds(timedEnemy.spawnTimeInSeconds);
-
-        if (timedEnemy.enemyPrefab != null)
+        while (true) // 지속적으로 적을 스폰하기 위해 무한 반복
         {
-            Instantiate(timedEnemy.enemyPrefab, spawnPosition, Quaternion.identity);
+            // 설정한 간격만큼 대기 후 유닛 생성
+            yield return new WaitForSeconds(timedEnemy.spawnInterval);
+
+            if (timedEnemy.enemyPrefab != null)
+            {
+                Instantiate(timedEnemy.enemyPrefab, spawnPosition, Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning("Enemy prefab is missing.");
+            }
         }
     }
 }

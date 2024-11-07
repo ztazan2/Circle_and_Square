@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4639685240341773516
 Transform:
   m_ObjectHideFlags: 0
@@ -120,13 +120,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca79e0292c1b33d4c8fa358947031c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 500
+  attackDamage: 1200
   attackRange: 1.5
   moveSpeed: 0.4
   attackCooldown: 1
-  maxHealth: 8000
+  maxHealth: 6000
   knockbackForce: 50
   healthText: {fileID: 7578388049634764744}
+  targetTags:
+  - base_player
+  - player
+  attackPriorityTags:
+  - player
+  - base_player
 --- !u!1 &6508186660948372634
 GameObject:
   m_ObjectHideFlags: 0

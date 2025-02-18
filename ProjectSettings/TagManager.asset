@@ -8,6 +8,9 @@ TagManager:
   - base_enemy
   - enemy
   - player
+  - LobbyScene
+  - MainScene
+  - Restart
   layers:
   - Default
   - TransparentFX
